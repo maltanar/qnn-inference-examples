@@ -6,10 +6,12 @@ def convert(qnn):
   new_qnn = []
   for L in qnn:
     if L.get_type() == "FullyConnectedLayer":
-     Wnew = np.asarray(L.W, dtype=np.int8)
-     new_qnn += [QNNFullyConnectedLayer(Wnew)]
+      Wnew = np.asarray(L.W, dtype=np.int8)
+      new_qnn += [QNNFullyConnectedLayer(Wnew)]
     elif L.get_type() == "BipolarThresholdingLayer":
-     new_qnn += [QNNBipolarThresholdingLayer(L.thresholds)]
+      new_qnn += [QNNBipolarThresholdingLayer(L.thresholds)]
+    elif L.get_type() == "ThresholdingLayer":
+      new_qnn += [QNNThresholdingLayer(L.thresholds)]
     elif L.get_type() == "LinearLayer":
      new_qnn += [QNNScaleShiftLayer(L.A, L.B)]
     else:
