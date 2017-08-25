@@ -1,5 +1,5 @@
 # qnn-inference-examples
-Jupyter notebook examples on image classification with quantized neural networks.
+Jupyter notebook examples on image classification with quantized neural networks. The intent here is to give a better understanding of what kind of computations takes place when performing inference with a quantized neural network.
 
 So far, the following notebooks are available:
 
