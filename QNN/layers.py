@@ -13,7 +13,12 @@ def convert(qnn):
     elif L.get_type() == "ThresholdingLayer":
       new_qnn += [QNNThresholdingLayer(L.thresholds)]
     elif L.get_type() == "LinearLayer":
-     new_qnn += [QNNScaleShiftLayer(L.A, L.B)]
+      new_qnn += [QNNScaleShiftLayer(L.A, L.B)]
+    elif L.get_type() == "PoolingLayer":
+      new_qnn += [QNNPoolingLayer(L.idim, L.chans, L.k, L.s, L.poolFxn)]
+    elif L.get_type() == "ConvolutionLayer":
+      W = L.W.reshape((L.ofm, L.ifm, L.k, L.k))
+      new_qnn += [QNNConvolutionLayer(W, L.idim, L.pad, L.stride, L.padVal)]
     else:
      raise Exception("Unrecognized layer type")
   return new_qnn
