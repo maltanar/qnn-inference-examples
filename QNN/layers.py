@@ -126,10 +126,10 @@ class QNNScaleShiftLayer(QNNLayer):
 class QNNPaddingLayer(QNNLayer):
     "A layer that adds padding around the edges of the image."
     def __init__(self, inDim, inChans, padCount, padVal):
-        self.dim = inDim
-        self.chans = inChans
-        self.padCount = padCount
-        self.padVal = padVal
+        self.dim = inDim          # input image dimension
+        self.chans = inChans      # number of input channels
+        self.padCount = padCount  # number of pixels to add on each edge
+        self.padVal = padVal      # value of pixels to be added to each edge
 
     def execute(self, v):
         img = v.reshape((self.chans, self.dim, self.dim))
@@ -142,10 +142,10 @@ class QNNPaddingLayer(QNNLayer):
 class QNNSlidingWindowLayer(QNNLayer):
     "Slide a window over a multichannel image (im2col)"
     def __init__(self, inDim, inChans, windowDim, stride=1):
-        self.idim = inDim
-        self.chans = inChans
-        self.k = windowDim
-        self.s = stride
+        self.idim = inDim     # input image dimension
+        self.chans = inChans  # channels in input image
+        self.k = windowDim    # window size
+        self.s = stride       # stride for next window
 
     def execute(self, v):
         # reshape the input vector into a 2D image
@@ -158,24 +158,27 @@ class QNNSlidingWindowLayer(QNNLayer):
 class QNNConvolutionLayer(QNNLayer):
     "Convolution via im2col and matrix-matrix multiplication"
     def __init__(self, W, inDim, pad, stride, padVal=0):
-        self.ofm = W.shape[0]
-        self.ifm = W.shape[1]
-        self.k = W.shape[2]
-        self.idim = inDim
-        self.padded_idim = inDim + 2*pad
-        self.odim = ((self.padded_idim - self.k) / stride) + 1
-        self.stride = stride
-        self.pad = pad
-        self.padVal = padVal
+        self.ofm = W.shape[0] # number of output channels
+        self.ifm = W.shape[1] # number of input channels
+        self.k = W.shape[2]   # kernel (window) dimension
+        self.idim = inDim     # input image dimension
+        self.padded_idim = inDim + 2*pad  # input image dimension including padding
+        self.odim = ((self.padded_idim - self.k) / stride) + 1  # output image dimension
+        self.stride = stride  # stride for sliding window
+        self.pad = pad        # number of padding pixels to add on each edge
+        self.padVal = padVal  # value of padding pixels
         if(W.shape[2] != W.shape[3]):
             raise Exception("Only square conv filters supported for now")
         # instantiate internal layer components
         self.layers = []
+        # add a padding layer, if padding is required
         if pad != 0:
             self.layers += [QNNPaddingLayer(self.idim, self.ifm, pad, padVal)]
+        # add the sliding window layer
         self.layers += [QNNSlidingWindowLayer(self.padded_idim, self.ifm, self.k, self.stride)]
+        # convert the kernel tensor to a matrix:
+        # [ofm][ifm][k][k] to [ofm][ifm*k*k]
         self.W = W.reshape((self.ofm, self.ifm*self.k*self.k))
-        self.outsize = self.ofm * self.odim * self.odim
 
     def execute(self, v):
         # execute internal padding/sliding window layers first
