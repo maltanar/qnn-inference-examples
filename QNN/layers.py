@@ -17,8 +17,13 @@ def convert(qnn):
     elif L.get_type() == "PoolingLayer":
       new_qnn += [QNNPoolingLayer(L.idim, L.chans, L.k, L.s, L.poolFxn)]
     elif L.get_type() == "ConvolutionLayer":
-      W = L.W.reshape((L.ofm, L.ifm, L.k, L.k))
-      new_qnn += [QNNConvolutionLayer(W, L.idim, L.pad, L.stride, L.padVal)]
+      Wnew = L.W.reshape((L.ofm, L.ifm, L.k, L.k))
+      Wnew = Wnew.astype(np.int8)
+      new_qnn += [QNNConvolutionLayer(Wnew, L.idim, L.pad, L.stride, L.padVal)]
+    elif L.get_type() == "SoftmaxLayer":
+      new_qnn += [QNNSoftmaxLayer()]
+    elif L.get_type() == "ReLULayer":
+      new_qnn += [QNNReLULayer()]
     else:
      raise Exception("Unrecognized layer type")
   return new_qnn
