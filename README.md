@@ -7,3 +7,4 @@ So far, the following notebooks are available:
 2. [Binarized, fully-connected MNIST](1-fully-connected-binarized-mnist.ipynb) for a deep dive inside a binarized fully-connected network
 3. [Binary weights, 2-bit activations, fully-connected MNIST](2-fully-connected-w1a2-mnist.ipynb) for demonstrating what happens when we go to 2-bit activations
 4. [Binarized, convolutional GTSRB](3-convolutional-binarized-gtsrb.ipynb) for an introduction to convolutional and pooling layers
+5. [Mixed 1-bit weights/2-bit activations and 8-bit weights/activations ImageNet](4-convolutional-mixed-imagenet.ipynb) for a quantized AlexNet on the ImageNet dataset.
