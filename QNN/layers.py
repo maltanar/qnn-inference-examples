@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from im2col import im2col_indices
+from QNN.im2col import im2col_indices
 
 def convert(qnn):
   new_qnn = []
@@ -35,9 +35,9 @@ def convert(qnn):
 
 # 1. Data layout for the input image and all intermediate activations is [channels][rows][columns] in C style layout, that is to say, looks like this if laid out as a 1D array,
 # assuming three columns per row, two rows per channel, two channels img[2][2][3]:
-# pixel pixel pixel pixel pixel pixel pixel pixel pixel pixel pixel pixel 
+# pixel pixel pixel pixel pixel pixel pixel pixel pixel pixel pixel pixel
 # ^                 ^                 ^                 ^
-# row 0             row 1             row 0             row 1 
+# row 0             row 1             row 0             row 1
 # ^                                   ^
 # channel 0                           channel 1
 
@@ -54,11 +54,11 @@ def predict(qnn, input_img):
 
 class QNNLayer(object):
   "Base class for all layer types."
-  
+
   def layerType(self):
     "Return the layer class name as a string."
     return self.__class__.__name__
-    
+
   def execute(self, v):
     "Forward-propagate given flat vector v through this layer."
     return v
